@@ -1,1 +1,136 @@
-coming soon 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>©big hosting by bigmanjtech ™</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+        body { background: #0a0a0f; color: #e4e4e7; line-height: 1.6; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+        
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #1f1f2e; }
+        .logo h1 { font-size: 24px; color: #fff; }
+        .logo span { color: #8b5cf6; font-weight: bold; }
+        .logo small { display: block; font-size: 12px; color: #a1a1aa; }
+        .nav a { color: #a1a1aa; text-decoration: none; margin-left: 25px; font-size: 14px; }
+        .nav a:hover { color: #8b5cf6; }
+        .btn-primary { background: #8b5cf6; color: #fff; padding: 10px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; }
+        
+        /* Hero */
+        .hero { text-align: center; padding: 60px 0 40px; }
+        .hero h1 { font-size: 42px; font-weight: 800; background: linear-gradient(to right, #8b5cf6, #d946ef); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 18px; color: #a1a1aa; max-width: 600px; margin: 20px auto; }
+        .hero .price-badge { background: #1f1f2e; display: inline-block; padding: 8px 24px; border-radius: 50px; font-size: 14px; border: 1px solid #2a2a3e; margin-top: 10px; }
+        
+        /* Pricing Grid */
+        .pricing-section { padding: 40px 0; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 30px; }
+        .pricing-card { background: #14141e; border: 1px solid #1f1f2e; border-radius: 16px; padding: 24px 16px; text-align: center; transition: 0.3s; }
+        .pricing-card:hover { border-color: #8b5cf6; transform: translateY(-5px); }
+        .pricing-card .name { font-size: 18px; font-weight: 700; }
+        .pricing-card .price { font-size: 28px; font-weight: 800; color: #fff; margin: 10px 0; }
+        .pricing-card .price small { font-size: 14px; font-weight: 400; color: #a1a1aa; }
+        .pricing-card .specs { font-size: 13px; color: #a1a1aa; }
+        .pricing-card .specs span { display: block; }
+        .pricing-card .btn-order { display: inline-block; margin-top: 15px; background: #2a2a3e; color: #fff; padding: 8px 20px; border-radius: 6px; text-decoration: none; font-size: 14px; }
+        .pricing-card .btn-order:hover { background: #8b5cf6; }
+        
+        /* Infinity special */
+        .infinity { border: 2px solid #8b5cf6; background: #1a142b; }
+        .infinity .name { color: #d946ef; }
+        .badge { background: #d946ef; color: #fff; font-size: 10px; padding: 2px 12px; border-radius: 50px; display: inline-block; margin-bottom: 8px; text-transform: uppercase; font-weight: 700; }
+        
+        /* Footer */
+        .footer { border-top: 1px solid #1f1f2e; margin-top: 40px; padding: 30px 0; text-align: center; color: #a1a1aa; font-size: 14px; }
+        
+        @media (max-width: 600px) {
+            .header { flex-direction: column; gap: 10px; }
+            .nav a { margin: 0 12px; font-size: 13px; }
+            .hero h1 { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <h1>©big hosting</h1>
+                <small>by bigmanjtech ™</small>
+            </div>
+            <div class="nav">
+                <a href="/pricing.html">Pricing</a>
+                <a href="/login.html">Log In</a>
+                <a href="/register.html" class="btn-primary">Get Started</a>
+            </div>
+        </header>
+
+        <!-- Hero -->
+        <section class="hero">
+            <div class="price-badge">🇹🇿 Starting at 1,500 TZS / month</div>
+            <h1>Deploy Your Bot in Seconds</h1>
+            <p>Telegram, Discord, WhatsApp — we host it all. Pay with M-Pesa, Tigo Pesa, or Credit Card. No technical headaches.</p>
+        </section>
+
+        <!-- Pricing Table (Preview) -->
+        <section class="pricing-section">
+            <h2 style="text-align:center; font-size:28px;">Choose Your Plan</h2>
+            <div class="pricing-grid">
+                <!-- Starter -->
+                <div class="pricing-card">
+                    <div class="name">Starter</div>
+                    <div class="price">1,500 <small>TZS</small></div>
+                    <div class="specs">
+                        <span>512 MB RAM</span>
+                        <span>1 GB Storage</span>
+                        <span>1 CPU Core</span>
+                    </div>
+                    <a href="/register.html" class="btn-order">Deploy Bot</a>
+                </div>
+                <!-- Pro -->
+                <div class="pricing-card">
+                    <div class="name">Pro</div>
+                    <div class="price">3,000 <small>TZS</small></div>
+                    <div class="specs">
+                        <span>1 GB RAM</span>
+                        <span>3 GB Storage</span>
+                        <span>1 CPU Core</span>
+                    </div>
+                    <a href="/register.html" class="btn-order">Deploy Bot</a>
+                </div>
+                <!-- Business -->
+                <div class="pricing-card">
+                    <div class="name">Business</div>
+                    <div class="price">5,500 <small>TZS</small></div>
+                    <div class="specs">
+                        <span>2 GB RAM</span>
+                        <span>6 GB Storage</span>
+                        <span>2 CPU Cores</span>
+                    </div>
+                    <a href="/register.html" class="btn-order">Deploy Bot</a>
+                </div>
+                <!-- Infinity -->
+                <div class="pricing-card infinity">
+                    <div class="badge">🔥 Premium</div>
+                    <div class="name">Infinity ♾️</div>
+                    <div class="price">100,000 <small>TZS</small></div>
+                    <div class="specs">
+                        <span>32 GB RAM</span>
+                        <span>500 GB Storage</span>
+                        <span>8 CPU Cores</span>
+                    </div>
+                    <a href="/register.html" class="btn-order" style="background:#8b5cf6;">Start Now</a>
+                </div>
+            </div>
+            <p style="text-align:center; color:#a1a1aa; margin-top:20px; font-size:13px;">🌍 International customers pay via Visa/Mastercard. 🇹🇿 Tanzania uses M-Pesa & Tigo Pesa.</p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            &copy; 2026 big hosting by bigmanjtech &trade;. All rights reserved. Built with bigmanjtech™ in Tanzania.
+        </footer>
+    </div>
+</body>
+</html>
