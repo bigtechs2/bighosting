@@ -1,1 +1,70 @@
-// Database schema will go here
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int      @id @default(autoincrement())
+  email           String   @unique
+  password_hash   String
+  full_name       String
+  country         String
+  phone           String?
+  currency        String   @default("TZS")
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  servers         Server[]
+  transactions    Transaction[]
+}
+
+model Plan {
+  id            Int     @id @default(autoincrement())
+  name          String
+  ram_mb        Int
+  disk_mb       Int
+  cpu_cores     Int
+  price_tzs     Int
+  is_infinity   Boolean @default(false)
+  created_at    DateTime @default(now())
+
+  servers       Server[]
+}
+
+model Server {
+  id                Int      @id @default(autoincrement())
+  user_id           Int
+  plan_id           Int
+  pterodactyl_id    Int      @unique
+  server_name       String
+  status            String   @default("pending")
+  deploy_method     String?
+  repo_url          String?
+  env_variables     Json?
+  created_at        DateTime @default(now())
+  expires_at        DateTime
+
+  user              User     @relation(fields: [user_id], references: [id])
+  plan              Plan     @relation(fields: [plan_id], references: [id])
+  transactions      Transaction[]
+}
+
+model Transaction {
+  id            Int      @id @default(autoincrement())
+  user_id       Int
+  server_id     Int?
+  amount_tzs    Int
+  currency_paid String
+  amount_paid   Float
+  payment_method String
+  status        String   @default("pending")
+  reference_id  String?
+  created_at    DateTime @default(now())
+
+  user          User     @relation(fields: [user_id], references: [id])
+  server        Server?  @relation(fields: [server_id], references: [id])
+}
