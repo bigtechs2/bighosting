@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Deploy Bot | ©big hosting by bigmanjtech ™</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+        body { background: #0a0a0f; color: #e4e4e7; min-height: 100vh; }
+        
+        .topbar { background: #14141e; border-bottom: 1px solid #1f1f2e; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .topbar .brand { font-size: 20px; font-weight: 700; color: #fff; }
+        .topbar .brand small { font-size: 12px; font-weight: 400; color: #8b5cf6; display: block; }
+        .topbar .back { color: #a1a1aa; text-decoration: none; font-size: 14px; }
+        .topbar .back:hover { color: #fff; }
+        
+        .container { max-width: 820px; margin: 0 auto; padding: 30px 20px; }
+        
+        h1 { font-size: 28px; margin-bottom: 6px; }
+        h1 span { color: #8b5cf6; }
+        .sub { color: #a1a1aa; margin-bottom: 28px; }
+        
+        /* Step Cards */
+        .step { background: #14141e; border: 1px solid #1f1f2e; border-radius: 16px; padding: 24px; margin-bottom: 20px; }
+        .step .step-num { font-size: 12px; font-weight: 700; color: #8b5cf6; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+        .step h3 { font-size: 18px; margin-bottom: 14px; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 14px; font-weight: 600; color: #e4e4e7; margin-bottom: 4px; }
+        input, select { width: 100%; padding: 12px 14px; background: #1a1a2a; border: 1px solid #2a2a3e; border-radius: 10px; color: #fff; font-size: 15px; outline: none; transition: 0.2s; }
+        input:focus, select:focus { border-color: #8b5cf6; }
+        .file-input-wrapper { background: #1a1a2a; border: 2px dashed #2a2a3e; border-radius: 12px; padding: 30px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .file-input-wrapper:hover { border-color: #8b5cf6; }
+        .file-input-wrapper input[type="file"] { display: none; }
+        .file-input-wrapper .label { color: #a1a1aa; font-size: 14px; }
+        .file-input-wrapper .label strong { color: #8b5cf6; }
+        .file-name { margin-top: 8px; font-size: 13px; color: #4ade80; }
+        
+        .method-toggle { display: flex; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+        .method-toggle button { padding: 10px 20px; background: #1a1a2a; border: 1px solid #2a2a3e; border-radius: 8px; color: #a1a1aa; cursor: pointer; font-size: 14px; font-weight: 600; transition: 0.2s; }
+        .method-toggle button.active { background: #2a1a4e; border-color: #8b5cf6; color: #fff; }
+        .method-toggle button:hover { border-color: #8b5cf6; }
+        .method-section { display: none; }
+        .method-section.active { display: block; }
+        
+        .env-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; flex-wrap: wrap; }
+        .env-row input { flex: 1; min-width: 120px; }
+        .env-row .remove-env { background: #450a0a; color: #f87171; border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer; font-size: 13px; }
+        .env-row .remove-env:hover { background: #7f1d1d; }
+        .add-env { background: #1f1f2e; color: #a1a1aa; border: 1px solid #2a2a3e; border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 13px; margin-top: 6px; }
+        .add-env:hover { border-color: #8b5cf6; color: #fff; }
+        
+        .btn-primary { background: #8b5cf6; color: #fff; padding: 14px 32px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; width: 100%; transition: 0.2s; }
+        .btn-primary:hover { background: #7c3aed; }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .status { margin-top: 14px; padding: 12px; border-radius: 8px; display: none; }
+        .status.success { display: block; background: #064e3b; color: #4ade80; border: 1px solid #065f46; }
+        .status.error { display: block; background: #450a0a; color: #f87171; border: 1px solid #7f1d1d; }
+        .status.info { display: block; background: #1a142b; color: #a78bfa; border: 1px solid #2a1a4e; }
+        
+        .footer { border-top: 1px solid #1f1f2e; margin-top: 40px; padding: 20px 0; text-align: center; color: #4a4a5e; font-size: 13px; }
+        
+        @media (max-width: 600px) {
+            .topbar { flex-direction: column; align-items: flex-start; }
+            .env-row { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <header class="topbar">
+        <div class="brand">
+            ©big hosting
+            <small>by bigmanjtech ™</small>
+        </div>
+        <a class="back" href="/dashboard.html">← Back to Dashboard</a>
+    </header>
+
+    <!-- Main -->
+    <div class="container">
+        <h1>🚀 Deploy Your Bot</h1>
+        <p class="sub">Choose a plan, upload or link your code, and set your environment variables.</p>
+
+        <form id="deployForm">
+            <!-- Step 1: Plan Selection -->
+            <div class="step">
+                <div class="step-num">Step 1</div>
+                <h3>Select a Plan</h3>
+                <div class="form-group">
+                    <label>Choose your tier</label>
+                    <select id="planSelect" required>
+                        <option value="">-- Select a plan --</option>
+                        <option value="512">Starter — 1,500 TZS (512 MB RAM, 1 GB Storage)</option>
+                        <option value="1024">Pro — 3,000 TZS (1 GB RAM, 3 GB Storage)</option>
+                        <option value="2048">Business — 5,500 TZS (2 GB RAM, 6 GB Storage)</option>
+                        <option value="3072">Performance — 8,000 TZS (3 GB RAM, 10 GB Storage)</option>
+                        <option value="4096">Advanced — 12,000 TZS (4 GB RAM, 15 GB Storage)</option>
+                        <option value="5120">Enterprise — 17,000 TZS (5 GB RAM, 25 GB Storage)</option>
+                        <option value="6144">Extreme — 23,000 TZS (6 GB RAM, 40 GB Storage)</option>
+                        <option value="7168">Ultra — 30,000 TZS (7 GB RAM, 60 GB Storage)</option>
+                        <option value="8192">Mega — 38,000 TZS (8 GB RAM, 80 GB Storage)</option>
+                        <option value="9216">Titan — 47,000 TZS (9 GB RAM, 100 GB Storage)</option>
+                        <option value="32768">Infinity ♾️ — 100,000 TZS (32 GB RAM, 500 GB Storage)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Step 2: Deployment Method -->
+            <div class="step">
+                <div class="step-num">Step 2</div>
+                <h3>Upload Your Code</h3>
+                <div class="method-toggle">
+                    <button type="button" id="methodGit" class="active">🔗 GitHub URL</button>
+                    <button type="button" id="methodZip">📦 Upload ZIP</button>
+                </div>
+
+                <!-- GitHub Method -->
+                <div id="gitSection" class="method-section active">
+                    <div class="form-group">
+                        <label>GitHub Repository URL</label>
+                        <input type="url" id="repoUrl" placeholder="https://github.com/username/repo.git" />
+                        <small style="color:#6a6a7e; font-size:12px;">Public repositories only. We'll clone and install dependencies automatically.</small>
+                    </div>
+                </div>
+
+                <!-- ZIP Method -->
+                <div id="zipSection" class="method-section">
+                    <div class="form-group">
+                        <label>Upload ZIP File (Max 25 MB)</label>
+                        <div class="file-input-wrapper" id="zipDrop">
+                            <input type="file" id="zipFile" accept=".zip" />
+                            <div class="label">
+                                <strong>Click to browse</strong> or drag and drop<br/>
+                                <span style="font-size:12px;">.zip only, max 25 MB</span>
+                            </div>
+                            <div class="file-name" id="fileName"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Environment Variables -->
+            <div class="step">
+                <div class="step-num">Step 3</div>
+                <h3>Environment Variables</h3>
+                <p style="color:#a1a1aa; font-size:14px; margin-bottom:12px;">Add tokens and secrets your bot needs (e.g., DISCORD_TOKEN, TELEGRAM_KEY).</p>
+                <div id="envContainer">
+                    <!-- Dynamic env rows will appear here -->
+                </div>
+                <button type="button" class="add-env" id="addEnvBtn">+ Add Environment Variable</button>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn-primary" id="deployBtn">Deploy Bot ⚡</button>
+            <div id="deployStatus" class="status"></div>
+        </form>
+    </div>
+
+    <footer class="footer">
+        &copy; 2026 big hosting by bigmanjtech &trade;
+    </footer>
+
+    <script>
+        // === Toggle between GitHub and ZIP ===
+        const methodGit = document.getElementById('methodGit');
+        const methodZip = document.getElementById('methodZip');
+        const gitSection = document.getElementById('gitSection');
+        const zipSection = document.getElementById('zipSection');
+
+        methodGit.addEventListener('click', () => {
+            methodGit.classList.add('active');
+            methodZip.classList.remove('active');
+            gitSection.classList.add('active');
+            zipSection.classList.remove('active');
+        });
+
+        methodZip.addEventListener('click', () => {
+            methodZip.classList.add('active');
+            methodGit.classList.remove('active');
+            zipSection.classList.add('active');
+            gitSection.classList.remove('active');
+        });
+
+        // === ZIP file handling ===
+        const zipInput = document.getElementById('zipFile');
+        const fileNameDisplay = document.getElementById('fileName');
+
+        zipInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 25 * 1024 * 1024) {
+                    alert('File exceeds 25 MB limit. Please compress your bot code.');
+                    zipInput.value = '';
+                    fileNameDisplay.textContent = '';
+                    return;
+                }
+                fileNameDisplay.textContent = '📎 ' + file.name + ' (' + (file.size / 1024 / 1024).toFixed(1) + ' MB)';
+            } else {
+                fileNameDisplay.textContent = '';
+            }
+        });
+
+        // Drop zone support
+        const dropZone = document.getElementById('zipDrop');
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#8b5cf6';
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = '#2a2a3e';
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#2a2a3e';
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                zipInput.files = files;
+                const file = files[0];
+                if (file.size > 25 * 1024 * 1024) {
+                    alert('File exceeds 25 MB limit.');
+                    zipInput.value = '';
+                    fileNameDisplay.textContent = '';
+                    return;
+                }
+                fileNameDisplay.textContent = '📎 ' + file.name + ' (' + (file.size / 1024 / 1024).toFixed(1) + ' MB)';
+            }
+        });
+
+        // === Environment Variables ===
+        const envContainer = document.getElementById('envContainer');
+        let envCount = 0;
+
+        function addEnvRow(key = '', value = '') {
+            const row = document.createElement('div');
+            row.className = 'env-row';
+            row.innerHTML = `
+                <input type="text" placeholder="Key (e.g., DISCORD_TOKEN)" class="env-key" value="${key}" />
+                <input type="text" placeholder="Value" class="env-value" value="${value}" />
+                <button type="button" class="remove-env">✕</button>
+            `;
+            row.querySelector('.remove-env').addEventListener('click', () => {
+                row.remove();
+            });
+            envContainer.appendChild(row);
+            envCount++;
+        }
+
+        // Add default rows (common bot tokens)
+        addEnvRow('DISCORD_TOKEN', '');
+        addEnvRow('TELEGRAM_BOT_KEY', '');
+
+        document.getElementById('addEnvBtn').addEventListener('click', () => {
+            addEnvRow('', '');
+        });
+
+        // === Form Submission ===
+        const form = document.getElementById('deployForm');
+        const statusDiv = document.getElementById('deployStatus');
+        const deployBtn = document.getElementById('deployBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            statusDiv.className = 'status info';
+            statusDiv.textContent = '⏳ Deploying your bot... Please wait.';
+            statusDiv.style.display = 'block';
+            deployBtn.disabled = true;
+            deployBtn.textContent = 'Deploying...';
+
+            // Gather data
+            const plan = document.getElementById('planSelect').value;
+            const repoUrl = document.getElementById('repoUrl').value;
+            const isGit = methodGit.classList.contains('active');
+
+            // Gather env variables
+            const envKeys = document.querySelectorAll('.env-key');
+            const envValues = document.querySelectorAll('.env-value');
+            const env = {};
+            envKeys.forEach((keyInput, index) => {
+                const k = keyInput.value.trim();
+                const v = envValues[index].value.trim();
+                if (k && v) env[k] = v;
+            });
+
+            // Prepare payload
+            const payload = {
+                plan: parseInt(plan),
+                method: isGit ? 'github' : 'zip',
+                repo_url: isGit ? repoUrl : null,
+                env: env
+            };
+
+            // If ZIP, we need to send FormData (file upload)
+            // For now, we'll just log it — backend will handle this later
+            console.log('Deploy payload:', payload);
+
+            // Simulate deployment (remove this when backend is ready)
+            setTimeout(() => {
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ Bot deployed successfully! Redirecting to dashboard...';
+                deployBtn.disabled = false;
+                deployBtn.textContent = 'Deploy Bot ⚡';
+                setTimeout(() => window.location.href = '/dashboard.html', 2000);
+            }, 2000);
+
+            // Real implementation would be:
+            // const formData = new FormData();
+            // formData.append('plan', plan);
+            // formData.append('method', isGit ? 'github' : 'zip');
+            // if (isGit) formData.append('repo_url', repoUrl);
+            // if (!isGit && zipInput.files[0]) formData.append('zip', zipInput.files[0]);
+            // formData.append('env', JSON.stringify(env));
+            // 
+            // const res = await fetch('/api/customer/deploy', {
+            //     method: 'POST',
+            //     headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+            //     body: formData
+            // });
+            // const data = await res.json();
+            // if (res.ok) { success... } else { error... }
+        });
+    </script>
+</body>
+</html>
