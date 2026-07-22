@@ -8,45 +8,47 @@ import loginHandler from './api/login.js';
 import meHandler from './api/me.js';
 import deployHandler from './api/customer/deploy.js';
 import serversHandler from './api/customer/servers.js';
-import createServerHandler from './api/pterodactyl/create.js';
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// === INITIALIZE EXPRESS ===
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware to parse JSON requests
-app.use(express.json());
-
-// === ROUTES ===
-// These connect the URL to your API files
-
-// Auth Routes
-app.post('/api/register', (req, res) => registerHandler(req, res));
-app.post('/api/login', (req, res) => loginHandler(req, res));
-app.get('/api/me', (req, res) => meHandler(req, res));
-
-// Customer Routes (Dashboard)
-app.get('/api/customer/servers', (req, res) => serversHandler(req, res));
-app.post('/api/customer/deploy', (req, res) => deployHandler(req, res));
-
-// Pterodactyl Routes (Bot Creation)
-app.post('/api/pterodactyl/create', (req, res) => createServerHandler(req, res));
-
-// Serve your frontend pages (HTML, CSS, JS)
-// This tells Express to serve files from the 'public' folder
-import path from 'path';
-import { fileURLToPath } from 'url';
+// Get the current directory path (for serving static files)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve static files (your HTML pages)
+// === MIDDLEWARE ===
+// This allows your server to read JSON data sent from your frontend
+app.use(express.json());
+
+// === ROUTES (Your API Endpoints) ===
+// These connect the URL paths to your backend files
+
+// Auth Routes (Sign up, Log in, Get Profile)
+app.post('/api/register', registerHandler);
+app.post('/api/login', loginHandler);
+app.get('/api/me', meHandler);
+
+// Customer Routes (Dashboard, Deploy Bot)
+app.get('/api/customer/servers', serversHandler);
+app.post('/api/customer/deploy', deployHandler);
+
+// === SERVE STATIC FILES (Your Frontend Pages) ===
+// This tells Express to serve all the files inside the 'public' folder
+// So your HTML, CSS, and JS files are accessible
 app.use(express.static(path.join(__dirname, 'public')));
 
-// For any other route, serve index.html (for SPA routing, optional)
+// === CATCH-ALL ROUTE ===
+// If someone visits any URL that doesn't match an API route,
+// send them the landing page (index.html)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Start the server
+// === START THE SERVER ===
 app.listen(port, () => {
-  console.log(`©big hosting by bigmanjtech ™ is running on http://localhost:${port}`);
+  console.log(`©big hosting by bigmanjtech ™ is running on port ${port}`);
 });
