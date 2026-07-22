@@ -1,0 +1,11 @@
+{
+  "name": "bighosting",
+  "version": "1.0.0",
+  "description": "©big hosting by bigmanjtech ™ — Bot hosting platform",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
