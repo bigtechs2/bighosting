@@ -16,7 +16,7 @@ services:
       - key: PORT
         value: 5000
       - key: DATABASE_URL
-        sync: false # You will set this manually in Render dashboard
+        sync: false
       - key: JWT_SECRET
         sync: false
       - key: STRIPE_SECRET_KEY
@@ -32,4 +32,4 @@ services:
       - key: ADMIN_EMAIL
         value: "admin@bighosting.com"
       - key: ADMIN_PASSWORD
-        sync: false # Set this in Render dashboard
+        sync: false
