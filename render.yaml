@@ -1,0 +1,35 @@
+# ==========================================
+# © bighosting by bigmanjtech™
+# Render Blueprint – Zero-click deploy
+# ==========================================
+
+services:
+  - type: web
+    name: bighosting
+    runtime: node
+    plan: free
+    buildCommand: npm install && npx prisma generate
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: DATABASE_URL
+        sync: false # You will set this manually in Render dashboard
+      - key: JWT_SECRET
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: PTERODACTYL_PANEL_URL
+        sync: false
+      - key: PTERODACTYL_API_KEY
+        sync: false
+      - key: BUSINESS_PHONE
+        value: "255636756591"
+      - key: ADMIN_EMAIL
+        value: "admin@bighosting.com"
+      - key: ADMIN_PASSWORD
+        sync: false # Set this in Render dashboard
