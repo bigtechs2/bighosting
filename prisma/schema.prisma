@@ -3,12 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id              Int      @id @default(autoincrement())
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
   email           String   @unique
   password_hash   String
   full_name       String
@@ -23,7 +23,7 @@ model User {
 }
 
 model Plan {
-  id            Int     @id @default(autoincrement())
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
   name          String
   ram_mb        Int
   disk_mb       Int
@@ -36,9 +36,9 @@ model Plan {
 }
 
 model Server {
-  id                Int      @id @default(autoincrement())
-  user_id           Int
-  plan_id           Int
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  user_id           String   @db.ObjectId
+  plan_id           String   @db.ObjectId
   pterodactyl_id    Int      @unique
   server_name       String
   status            String   @default("pending")
@@ -54,17 +54,17 @@ model Server {
 }
 
 model Transaction {
-  id            Int      @id @default(autoincrement())
-  user_id       Int
-  server_id     Int?
-  amount_tzs    Int
-  currency_paid String
-  amount_paid   Float
-  payment_method String
-  status        String   @default("pending")
-  reference_id  String?
-  created_at    DateTime @default(now())
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  user_id         String   @db.ObjectId
+  server_id       String?  @db.ObjectId
+  amount_tzs      Int
+  currency_paid   String
+  amount_paid     Float
+  payment_method  String
+  status          String   @default("pending")
+  reference_id    String?
+  created_at      DateTime @default(now())
 
-  user          User     @relation(fields: [user_id], references: [id])
-  server        Server?  @relation(fields: [server_id], references: [id])
+  user            User     @relation(fields: [user_id], references: [id])
+  server          Server?  @relation(fields: [server_id], references: [id])
 }
