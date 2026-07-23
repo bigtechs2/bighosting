@@ -12,43 +12,30 @@ import { PrismaClient } from '@prisma/client';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// ES Module dirname fix
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
 dotenv.config();
 
-// ============================
-// INITIALIZE
-// ============================
 const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 5000;
 
-// ============================
-// MIDDLEWARE
-// ============================
+// ---- Middleware ----
 app.use(helmet());
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// ============================
-// SERVE STATIC FRONTEND
-// ============================
-// Serve static files from src/frontend
+// ---- Serve Static Frontend ----
 const frontendPath = path.join(__dirname, 'src', 'frontend');
 app.use(express.static(frontendPath));
 
-// Default route -> index.html (Landing page)
 app.get('/', (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
-// ============================
-// HEALTH CHECK (for Render)
-// ============================
+// ---- Health Check ----
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
@@ -58,9 +45,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// ============================
-// API ROUTES (Placeholders)
-// ============================
+// ---- API Status ----
 app.get('/api/status', (req, res) => {
   res.json({
     message: '🚀 bighosting API is running!',
@@ -69,9 +54,7 @@ app.get('/api/status', (req, res) => {
   });
 });
 
-// ============================
-// ERROR HANDLER (Catch-all)
-// ============================
+// ---- Error Handler ----
 app.use((err, req, res, next) => {
   console.error('❌ Global Error:', err.message);
   res.status(err.status || 500).json({
@@ -80,7 +63,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 Handler
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -88,9 +70,7 @@ app.use((req, res) => {
   });
 });
 
-// ============================
-// START SERVER
-// ============================
+// ---- Start Server ----
 app.listen(PORT, () => {
   console.log(`=========================================`);
   console.log(`© bighosting by bigmanjtech™`);
