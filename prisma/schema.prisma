@@ -37,6 +37,7 @@ model User {
   invoices              Invoice[]
   auditLogs             AuditLog[]
   announcements         Announcement[]   @relation("AdminAnnouncements")
+  passwordResets        PasswordReset[]
 
   @@map("users")
 }
@@ -390,4 +391,23 @@ model AuditLog {
   @@index([action])
   @@index([createdAt])
   @@map("audit_logs")
+}
+
+// ==============================
+// 14. PASSWORD RESETS  <--- NEW!
+// ==============================
+model PasswordReset {
+  id        String   @id @default(cuid())
+  email     String   @db.VarChar(191)
+  token     String   @unique @db.VarChar(255)
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [email], references: [email], onDelete: CASCADE)
+
+  @@index([email])
+  @@index([token])
+  @@index([expiresAt])
+  @@map("password_resets")
 }
