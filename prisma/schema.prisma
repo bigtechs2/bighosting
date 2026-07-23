@@ -21,15 +21,14 @@ model User {
   password              String          @db.Text
   name                  String          @db.VarChar(100)
   role                  Role            @default(USER)
-  pterodactylUserId     Int?            @unique // ID from Pterodactyl panel
-  pterodactylEmail      String?         @db.VarChar(191) // Synced with Pterodactyl
+  pterodactylUserId     Int?            @unique
+  pterodactylEmail      String?         @db.VarChar(191)
   isSuspended           Boolean         @default(false)
   suspensionReason      String?         @db.Text
   createdAt             DateTime        @default(now())
   updatedAt             DateTime        @updatedAt
   lastLogin             DateTime?
 
-  // Relations
   orders                Order[]
   payments              Payment[]
   servers               Server[]
@@ -55,22 +54,18 @@ model Plan {
   id              String   @id @default(cuid())
   name            String   @db.VarChar(100)
   description     String?  @db.Text
-  price           Float    @default(0.0)
-  currency        String   @default("USD") @db.VarChar(10)
-  cpuLimit        Int      @default(100) // Percentage
-  ramLimit        Int      @default(1024) // MB
-  diskLimit       Int      @default(5120) // MB
-  databaseLimit   Int      @default(0)
-  backupLimit     Int      @default(0)
-  serverLimit     Int      @default(1) // Max servers per order
-  allocationLimit Int      @default(1) // Ports allocated
-  features        Json     @default("[]") // [ "SFTP", "Console", "File Manager" ]
+  priceMonthly    Int      @default(1500)
+  priceYearly     Int      @default(15000)
+  currency        String   @default("TSh") @db.VarChar(10)
+  cpuLimit        Int      @default(100)
+  ramLimit        Int      @default(512)
+  diskLimit       Int      @default(1024)
+  botSizeLimit    Int      @default(1)
   isActive        Boolean  @default(true)
   sortOrder       Int      @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  // Relations
   orders          Order[]
   servers         Server[]
 
@@ -78,7 +73,7 @@ model Plan {
 }
 
 // ==============================
-// 3. ORDERS (Purchase records)
+// 3. ORDERS
 // ==============================
 model Order {
   id            String       @id @default(cuid())
@@ -86,14 +81,13 @@ model Order {
   userId        String
   planId        String
   quantity      Int          @default(1)
-  totalAmount   Float
-  currency      String       @default("USD") @db.VarChar(10)
+  totalAmount   Int
+  currency      String       @default("TSh") @db.VarChar(10)
   status        OrderStatus  @default(PENDING)
-  expiresAt     DateTime?    // Pending payment expiration
+  expiresAt     DateTime?
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
-  // Relations
   user          User         @relation(fields: [userId], references: [id], onDelete: CASCADE)
   plan          Plan         @relation(fields: [planId], references: [id])
   payments      Payment[]
@@ -115,24 +109,23 @@ enum OrderStatus {
 }
 
 // ==============================
-// 4. PAYMENTS (Transactions)
+// 4. PAYMENTS
 // ==============================
 model Payment {
   id              String          @id @default(cuid())
-  transactionId   String?         @unique @db.VarChar(100) // Stripe / Gateway ID
+  transactionId   String?         @unique @db.VarChar(100)
   userId          String
   orderId         String
-  amount          Float
-  currency        String          @default("USD") @db.VarChar(10)
+  amount          Int
+  currency        String          @default("TSh") @db.VarChar(10)
   gateway         PaymentGateway  @default(STRIPE)
   status          PaymentStatus   @default(PENDING)
-  metadata        Json?           // Gateway-specific data
+  metadata        Json?
   receiptUrl      String?         @db.Text
   paidAt          DateTime?
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
-  // Relations
   user            User            @relation(fields: [userId], references: [id], onDelete: CASCADE)
   order           Order           @relation(fields: [orderId], references: [id], onDelete: CASCADE)
 
@@ -157,11 +150,11 @@ enum PaymentStatus {
 }
 
 // ==============================
-// 5. SERVERS (Pterodactyl Instances)
+// 5. SERVERS
 // ==============================
 model Server {
   id                  String          @id @default(cuid())
-  serverIdentifier    String          @unique @db.VarChar(100) // Pterodactyl ID
+  serverIdentifier    String          @unique @db.VarChar(100)
   userId              String
   orderId             String
   planId              String
@@ -183,11 +176,10 @@ model Server {
   startupVariables    Json            @default("{}")
   suspended           Boolean         @default(false)
   suspensionReason    String?         @db.Text
-  expiresAt           DateTime?       // Billing expiry
+  expiresAt           DateTime?
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
 
-  // Relations
   user                User            @relation(fields: [userId], references: [id], onDelete: CASCADE)
   order               Order           @relation(fields: [orderId], references: [id])
   plan                Plan            @relation(fields: [planId], references: [id])
@@ -211,7 +203,7 @@ enum ServerStatus {
 }
 
 // ==============================
-// 6. TICKETS (Support)
+// 6. TICKETS
 // ==============================
 model Ticket {
   id          String          @id @default(cuid())
@@ -226,7 +218,6 @@ model Ticket {
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
-  // Relations
   user        User            @relation(fields: [userId], references: [id], onDelete: CASCADE)
 
   @@index([userId])
@@ -249,19 +240,18 @@ enum TicketPriority {
 }
 
 // ==============================
-// 7. NOTIFICATIONS (User alerts)
+// 7. NOTIFICATIONS
 // ==============================
 model Notification {
   id        String   @id @default(cuid())
   userId    String
   title     String   @db.VarChar(100)
   message   String   @db.Text
-  type      String   @db.VarChar(50) // ORDER, SERVER, BILLING, SUPPORT
+  type      String   @db.VarChar(50)
   link      String?  @db.Text
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  // Relations
   user      User     @relation(fields: [userId], references: [id], onDelete: CASCADE)
 
   @@index([userId])
@@ -270,15 +260,15 @@ model Notification {
 }
 
 // ==============================
-// 8. INVOICES (Billing)
+// 8. INVOICES
 // ==============================
 model Invoice {
   id            String          @id @default(cuid())
   invoiceNumber String          @unique @db.VarChar(50)
   userId        String
   orderId       String?
-  amount        Float
-  currency      String          @default("USD") @db.VarChar(10)
+  amount        Int
+  currency      String          @default("TSh") @db.VarChar(10)
   status        InvoiceStatus   @default(UNPAID)
   dueDate       DateTime
   paidAt        DateTime?
@@ -286,7 +276,6 @@ model Invoice {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 
-  // Relations
   user          User            @relation(fields: [userId], references: [id], onDelete: CASCADE)
   order         Order?          @relation(fields: [orderId], references: [id])
 
@@ -303,7 +292,7 @@ enum InvoiceStatus {
 }
 
 // ==============================
-// 9. COUPONS (Discounts)
+// 9. COUPONS
 // ==============================
 model Coupon {
   id             String    @id @default(cuid())
@@ -311,8 +300,8 @@ model Coupon {
   description    String?   @db.Text
   discountType   DiscountType @default(PERCENTAGE)
   discountValue  Float
-  minAmount      Float?    // Minimum order total to apply
-  maxUses        Int?      // Total allowed uses
+  minAmount      Float?
+  maxUses        Int?
   usedCount      Int       @default(0)
   validFrom      DateTime
   validUntil     DateTime
@@ -329,21 +318,20 @@ enum DiscountType {
 }
 
 // ==============================
-// 10. ANNOUNCEMENTS (Global alerts)
+// 10. ANNOUNCEMENTS
 // ==============================
 model Announcement {
   id        String   @id @default(cuid())
   title     String   @db.VarChar(200)
   content   String   @db.Text
-  type      String   @db.VarChar(50) // INFO, WARNING, MAINTENANCE, PROMO
+  type      String   @db.VarChar(50)
   isActive  Boolean  @default(true)
   priority  Int      @default(0)
-  createdBy String   // User ID (Admin)
+  createdBy String
   expiresAt DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relations
   admin     User     @relation("AdminAnnouncements", fields: [createdBy], references: [id])
 
   @@index([isActive])
@@ -351,7 +339,7 @@ model Announcement {
 }
 
 // ==============================
-// 11. SETTINGS (System config)
+// 11. SETTINGS
 // ==============================
 model Setting {
   id          String   @id @default(cuid())
@@ -359,7 +347,7 @@ model Setting {
   value       Json
   description String?  @db.Text
   category    String?  @db.VarChar(50)
-  isPublic    Boolean  @default(false) // Accessible to frontend
+  isPublic    Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -367,14 +355,14 @@ model Setting {
 }
 
 // ==============================
-// 12. LOGS (System logs)
+// 12. LOGS
 // ==============================
 model Log {
   id        String   @id @default(cuid())
-  level     String   @db.VarChar(20) // INFO, WARN, ERROR, DEBUG
+  level     String   @db.VarChar(20)
   message   String   @db.Text
-  meta      Json?    // Extra data (user, ip, etc.)
-  source    String?  @db.VarChar(50) // API, CRON, WEBHOOK
+  meta      Json?
+  source    String?  @db.VarChar(50)
   createdAt DateTime @default(now())
 
   @@index([level])
@@ -383,24 +371,23 @@ model Log {
 }
 
 // ==============================
-// 13. AUDIT LOGS (Admin actions)
+// 13. AUDIT LOGS
 // ==============================
 model AuditLog {
   id          String   @id @default(cuid())
-  userId      String   // Admin who performed action
-  action      String   @db.VarChar(100) // CREATE, UPDATE, DELETE, SUSPEND, etc.
-  targetType  String   @db.VarChar(50) // USER, SERVER, ORDER, PLAN
+  userId      String
+  action      String   @db.VarChar(100)
+  targetType  String   @db.VarChar(50)
   targetId    String   @db.VarChar(100)
-  details     Json?    // Changes made
+  details     Json?
   ipAddress   String?  @db.VarChar(45)
   userAgent   String?  @db.Text
   createdAt   DateTime @default(now())
 
-  // Relations
   user        User     @relation(fields: [userId], references: [id], onDelete: CASCADE)
 
   @@index([userId])
   @@index([action])
   @@index([createdAt])
   @@map("audit_logs")
-)
+}
