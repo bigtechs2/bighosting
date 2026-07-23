@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bighosting by bigmanjtech™ – Premium Hosting</title>
+  <meta name="description" content="Automated hosting platform with instant deployment, Stripe payments, and 24/7 support." />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>" />
+</head>
+<body>
+
+  <!-- ==========================================
+  NAVBAR
+  ========================================== -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="/" class="nav-logo">
+        <span class="logo-icon">🚀</span>
+        <span>bighosting</span>
+        <span class="logo-badge">™</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="/login.html" class="btn btn-outline">Login</a></li>
+        <li><a href="/register.html" class="btn btn-primary">Get Started</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ==========================================
+  HERO
+  ========================================== -->
+  <section class="hero" id="home">
+    <div class="container hero-container">
+      <div class="hero-content">
+        <div class="hero-badge">🚀 Launch in 60 seconds</div>
+        <h1 class="hero-title">
+          Deploy Your<br />
+          <span class="accent-text">Hosting Instantly</span>
+        </h1>
+        <p class="hero-subtitle">
+          Powered by Pterodactyl — pay once, get your server live.
+          <br />No manual setup. No hidden fees.
+        </p>
+        <div class="hero-buttons">
+          <a href="/register.html" class="btn btn-primary btn-large">Start Free Trial</a>
+          <a href="#pricing" class="btn btn-outline btn-large">View Plans</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number">99.9%</span>
+            <span class="stat-label">Uptime</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">2,400+</span>
+            <span class="stat-label">Servers Deployed</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">24/7</span>
+            <span class="stat-label">Support</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-card-glass">
+          <div class="glass-icon">⚡</div>
+          <p>Server <span class="accent-text">#BH-7842</span></p>
+          <div class="status-dot online"></div>
+          <span class="status-text">Running</span>
+          <div class="resource-bar">
+            <div class="bar-label">CPU <span>12%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:12%;"></div></div>
+          </div>
+          <div class="resource-bar">
+            <div class="bar-label">RAM <span>3.2GB / 8GB</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:40%;"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+  FEATURES
+  ========================================== -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Why bighosting</span>
+        <h2>Built for Developers &amp; Gamers</h2>
+        <p>Everything you need to host and scale — without the complexity.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Instant Provisioning</h3>
+          <p>Server spins up automatically the moment your payment clears. No waiting.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3>Full Control</h3>
+          <p>Console, file manager, startup variables, and SFTP — all inside one dashboard.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💳</div>
+          <h3>Payments Made Simple</h3>
+          <p>Visa, Mastercard, and mobile money (Tanzania) supported. Secure and fast.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔐</div>
+          <h3>Enterprise Security</h3>
+          <p>JWT auth, bcrypt hashing, rate limiting, and audit logs keep you safe.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+  PRICING
+  ========================================== -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Plans</span>
+        <h2>Choose Your Power</h2>
+        <p>Start small, scale huge. All plans include instant deployment.</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-badge">Starter</div>
+          <h3>Bronze</h3>
+          <div class="price"><span>$</span>9<span>/mo</span></div>
+          <ul class="pricing-features">
+            <li>✅ 2GB RAM</li>
+            <li>✅ 10GB SSD</li>
+            <li>✅ 1 vCPU</li>
+            <li>✅ 1 Backup</li>
+            <li>✅ Console + File Manager</li>
+          </ul>
+          <a href="/register.html" class="btn btn-primary">Start Now</a>
+        </div>
+        <div class="pricing-card featured">
+          <div class="pricing-badge">Most Popular</div>
+          <h3>Gold</h3>
+          <div class="price"><span>$</span>29<span>/mo</span></div>
+          <ul class="pricing-features">
+            <li>✅ 8GB RAM</li>
+            <li>✅ 50GB SSD</li>
+            <li>✅ 4 vCPU</li>
+            <li>✅ 5 Backups</li>
+            <li>✅ Priority Support</li>
+          </ul>
+          <a href="/register.html" class="btn btn-primary">Start Now</a>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-badge">Enterprise</div>
+          <h3>Platinum</h3>
+          <div class="price"><span>$</span>89<span>/mo</span></div>
+          <ul class="pricing-features">
+            <li>✅ 32GB RAM</li>
+            <li>✅ 200GB SSD</li>
+            <li>✅ 8 vCPU</li>
+            <li>✅ 20 Backups</li>
+            <li>✅ Dedicated Account Manager</li>
+          </ul>
+          <a href="/register.html" class="btn btn-primary">Start Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+  ABOUT
+  ========================================== -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-content">
+          <span class="section-tag">About</span>
+          <h2>© bighosting by <span class="accent-text">bigmanjtech™</span></h2>
+          <p>
+            We're a Tanzanian-born hosting platform built for speed, security, and simplicity.
+            Our mission is to automate the headache out of server deployment so you can focus
+            on building.
+          </p>
+          <p>
+            From Pterodactyl integration to Stripe payments — every line of code is crafted
+            to give you a seamless experience.
+          </p>
+          <div class="about-contact">
+            <span>📞 <strong>Business:</strong> 255636756591</span>
+            <span>✉️ <strong>Email:</strong> support@bighosting.com</span>
+          </div>
+        </div>
+        <div class="about-image">
+          <div class="about-glass">
+            <span>🚀</span>
+            <p>Hosting reimagined.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+  CONTACT / CTA
+  ========================================== -->
+  <section class="cta" id="contact">
+    <div class="container cta-container">
+      <div class="cta-box">
+        <h2>Ready to Deploy?</h2>
+        <p>Join thousands of developers using bighosting to power their projects.</p>
+        <a href="/register.html" class="btn btn-primary btn-large">Get Started — It's Free</a>
+        <p class="cta-phone">📞 Have questions? Call <strong>255636756591</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+  FOOTER
+  ========================================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="/" class="nav-logo">
+            <span class="logo-icon">🚀</span>
+            <span>bighosting</span>
+            <span class="logo-badge">™</span>
+          </a>
+          <p>© bighosting by bigmanjtech™<br />All rights reserved.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#about">About</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Status</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Cookies</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>Built with ☕ in Tanzania</span>
+        <span>📞 255636756591</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================
+  MOBILE NAV TOGGLE
+  ========================================== -->
+  <script>
+    const toggle = document.getElementById('navToggle');
+    const links = document.getElementById('navLinks');
+    toggle.addEventListener('click', () => {
+      links.classList.toggle('active');
+    });
+  </script>
+
+</body>
+</html>
