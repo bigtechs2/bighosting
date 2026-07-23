@@ -12,6 +12,11 @@ import { PrismaClient } from '@prisma/client';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+// ==========================================
+// NEW: Import Authentication Routes
+// ==========================================
+import authRoutes from './src/backend/routes/authRoutes.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -34,6 +39,11 @@ app.use(express.static(frontendPath));
 app.get('/', (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
+
+// ==========================================
+// NEW: Authentication Routes (Login, Register, Forgot Password, Reset)
+// ==========================================
+app.use('/api/auth', authRoutes);
 
 // ---- Health Check ----
 app.get('/api/health', (req, res) => {
