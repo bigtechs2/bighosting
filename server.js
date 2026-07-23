@@ -1,7 +1,4 @@
 // server.js
-// This is the main server for Render — it keeps running 24/7
-// It maps all your API routes to the files you already created
-
 import express from 'express';
 import registerHandler from './api/register.js';
 import loginHandler from './api/login.js';
@@ -12,43 +9,69 @@ import serversHandler from './api/customer/servers.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// === INITIALIZE EXPRESS ===
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Get the current directory path (for serving static files)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// === MIDDLEWARE ===
-// This allows your server to read JSON data sent from your frontend
 app.use(express.json());
 
-// === ROUTES (Your API Endpoints) ===
-// These connect the URL paths to your backend files
+// --- WRAPPED ROUTES WITH ERROR HANDLING ---
+// This will catch crashes and return them as JSON errors
 
-// Auth Routes (Sign up, Log in, Get Profile)
-app.post('/api/register', registerHandler);
-app.post('/api/login', loginHandler);
-app.get('/api/me', meHandler);
+app.post('/api/register', async (req, res) => {
+  try {
+    await registerHandler(req, res);
+  } catch (error) {
+    console.error('Register crash:', error);
+    res.status(500).json({ error: 'Server crash: ' + error.message });
+  }
+});
 
-// Customer Routes (Dashboard, Deploy Bot)
-app.get('/api/customer/servers', serversHandler);
-app.post('/api/customer/deploy', deployHandler);
+app.post('/api/login', async (req, res) => {
+  try {
+    await loginHandler(req, res);
+  } catch (error) {
+    console.error('Login crash:', error);
+    res.status(500).json({ error: 'Server crash: ' + error.message });
+  }
+});
 
-// === SERVE STATIC FILES (Your Frontend Pages) ===
-// This tells Express to serve all the files inside the 'public' folder
-// So your HTML, CSS, and JS files are accessible
+app.get('/api/me', async (req, res) => {
+  try {
+    await meHandler(req, res);
+  } catch (error) {
+    console.error('Me crash:', error);
+    res.status(500).json({ error: 'Server crash: ' + error.message });
+  }
+});
+
+app.get('/api/customer/servers', async (req, res) => {
+  try {
+    await serversHandler(req, res);
+  } catch (error) {
+    console.error('Servers crash:', error);
+    res.status(500).json({ error: 'Server crash: ' + error.message });
+  }
+});
+
+app.post('/api/customer/deploy', async (req, res) => {
+  try {
+    await deployHandler(req, res);
+  } catch (error) {
+    console.error('Deploy crash:', error);
+    res.status(500).json({ error: 'Server crash: ' + error.message });
+  }
+});
+
+// Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// === CATCH-ALL ROUTE ===
-// If someone visits any URL that doesn't match an API route,
-// send them the landing page (index.html)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// === START THE SERVER ===
 app.listen(port, () => {
-  console.log(`©big hosting by bigmanjtech ™ is running on port ${port}`);
+  console.log(`©big hosting running on port ${port}`);
 });
