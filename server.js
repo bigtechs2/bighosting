@@ -13,9 +13,10 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 // ==========================================
-// NEW: Import Authentication Routes
+// IMPORT ROUTES
 // ==========================================
 import authRoutes from './src/backend/routes/authRoutes.js';
+import serverRoutes from './src/backend/routes/serverRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,11 +41,6 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
-// ==========================================
-// NEW: Authentication Routes (Login, Register, Forgot Password, Reset)
-// ==========================================
-app.use('/api/auth', authRoutes);
-
 // ---- Health Check ----
 app.get('/api/health', (req, res) => {
   res.status(200).json({
@@ -64,7 +60,21 @@ app.get('/api/status', (req, res) => {
   });
 });
 
-// ---- Error Handler ----
+// ==========================================
+// API ROUTES
+// ==========================================
+
+// Authentication Routes (Login, Register, Forgot Password, Reset)
+app.use('/api/auth', authRoutes);
+
+// Server Routes (Manage Pterodactyl Servers)
+app.use('/api/servers', serverRoutes);
+
+// ==========================================
+// ERROR HANDLERS
+// ==========================================
+
+// Global Error Handler
 app.use((err, req, res, next) => {
   console.error('❌ Global Error:', err.message);
   res.status(err.status || 500).json({
@@ -73,6 +83,7 @@ app.use((err, req, res, next) => {
   });
 });
 
+// 404 Not Found Handler
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -87,6 +98,10 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🌍 Visit: http://localhost:${PORT}`);
   console.log(`📞 Business Contact: ${process.env.BUSINESS_PHONE}`);
+  console.log(`=========================================`);
+  console.log(`📋 Routes registered:`);
+  console.log(`   /api/auth     - Authentication (login, register, reset)`);
+  console.log(`   /api/servers  - Server management (start, stop, files)`);
   console.log(`=========================================`);
 });
 
