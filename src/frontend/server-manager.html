@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Server Manager – bighosting by bigmanjtech™</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🖥️</text></svg>" />
+  <style>
+    /* ==========================================
+       Server Manager Specific Styles
+       ========================================== */
+    .manager-page {
+      padding-top: 80px;
+      min-height: 100vh;
+      background: var(--bg-primary);
+    }
+
+    .manager-header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 20px 0;
+      margin-bottom: 24px;
+    }
+
+    .manager-header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .manager-header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .manager-header .server-status-badge {
+      font-size: 0.7rem;
+      padding: 4px 14px;
+      border-radius: 50px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .manager-header .server-status-badge.running {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--accent);
+    }
+
+    .manager-header .server-status-badge.stopped {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+    }
+
+    .manager-header .server-status-badge.installing {
+      background: rgba(251, 191, 36, 0.2);
+      color: #fbbf24;
+    }
+
+    .manager-header .server-status-badge.suspended {
+      background: rgba(251, 146, 60, 0.2);
+      color: #fb923c;
+    }
+
+    .btn-back {
+      padding: 8px 20px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .btn-back:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ---- Tabs ---- */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+      border: 1px solid var(--border-color);
+    }
+
+    .tab-btn {
+      padding: 10px 24px;
+      background: transparent;
+      border: none;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+      background: var(--bg-elevated);
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: var(--text-inverse);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* ---- Resource Bar ---- */
+    .resource-bar-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .resource-bar-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+    }
+
+    .resource-bar-item .label {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .resource-bar-item .value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .resource-bar-item .bar-track {
+      margin-top: 8px;
+      width: 100%;
+      height: 6px;
+      background: var(--bg-elevated);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .resource-bar-item .bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 4px;
+      transition: width 0.8s ease;
+    }
+
+    /* ---- Console ---- */
+    .console-container {
+      background: #0a0a0f;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      max-height: 400px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: #a0aec0;
+      line-height: 1.6;
+      margin-bottom: 12px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .console-container .console-line {
+      color: #a0aec0;
+    }
+
+    .console-container .console-line.error {
+      color: #f87171;
+    }
+
+    .console-container .console-line.success {
+      color: var(--accent);
+    }
+
+    .console-input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .console-input-row input {
+      flex: 1;
+      padding: 12px 16px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .console-input-row input:focus {
+      border-color: var(--accent);
+    }
+
+    .console-input-row button {
+      padding: 12px 24px;
+      background: var(--accent);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: var(--text-inverse);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .console-input-row button:hover {
+      background: var(--accent-hover);
+    }
+
+    /* ---- File Manager ---- */
+    .file-manager {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .file-manager-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .file-manager-header .path {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-family: monospace;
+    }
+
+    .file-manager-header .path strong {
+      color: var(--text-primary);
+    }
+
+    .file-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .file-table th {
+      text-align: left;
+      padding: 10px 16px;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--bg-elevated);
+    }
+
+    .file-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+
+    .file-table tr:hover td {
+      background: var(--bg-elevated);
+    }
+
+    .file-table .file-icon {
+      font-size: 1.2rem;
+      margin-right: 8px;
+    }
+
+    .file-table .file-name {
+      cursor: pointer;
+      color: var(--accent);
+    }
+
+    .file-table .file-name:hover {
+      text-decoration: underline;
+    }
+
+    .file-table .file-actions button {
+      padding: 4px 12px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      margin-right: 4px;
+    }
+
+    .file-table .file-actions button:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .file-table .file-actions button.danger:hover {
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
+    /* ---- Server Details ---- */
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .detail-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+    }
+
+    .detail-item .label {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .detail-item .value {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-top: 4px;
+      color: var(--text-primary);
+    }
+
+    /* ---- Server Controls ---- */
+    .controls-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .controls-grid .btn-sm {
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: transparent;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .controls-grid .btn-sm:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .controls-grid .btn-sm.danger:hover {
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
+    .controls-grid .btn-sm.primary {
+      background: var(--accent);
+      color: var(--text-inverse);
+      border-color: var(--accent);
+    }
+
+    .controls-grid .btn-sm.primary:hover {
+      background: var(--accent-hover);
+    }
+
+    /* ---- Loading ---- */
+    .loading-spinner {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .loading-spinner .spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid var(--border-color);
+      border-radius: 50%;
+      border-top-color: var(--accent);
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* ---- Empty State ---- */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 768px) {
+      .resource-bar-container {
+        grid-template-columns: 1fr;
+      }
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+      .manager-header-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+      }
+      .tab-btn {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+      }
+      .console-input-row {
+        flex-direction: column;
+      }
+      .file-table {
+        font-size: 0.8rem;
+      }
+      .file-table th,
+      .file-table td {
+        padding: 6px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+  NAVBAR
+  ========================================== -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="/" class="nav-logo">
+        <span class="logo-icon">🚀</span>
+        <span>bighosting</span>
+        <span class="logo-badge">™</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/dashboard.html">Dashboard</a></li>
+        <li><a href="#" id="navLogout" style="color: #f87171;">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ==========================================
+  SERVER MANAGER
+  ========================================== -->
+  <div class="manager-page">
+
+    <!-- Header -->
+    <div class="manager-header">
+      <div class="container manager-header-content">
+        <div>
+          <h1>
+            🖥️ <span id="serverName">Loading...</span>
+            <span class="server-status-badge" id="serverStatusBadge">Loading</span>
+          </h1>
+          <p style="color: var(--text-muted); font-size: 0.85rem;" id="serverPlan">Plan: Loading...</p>
+        </div>
+        <div>
+          <a href="/dashboard.html" class="btn-back">← Back to Dashboard</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- Loading State -->
+      <div id="loadingState" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading server details...</p>
+      </div>
+
+      <!-- Main Content (hidden initially) -->
+      <div id="mainContent" style="display: none;">
+
+        <!-- Resource Bars -->
+        <div class="resource-bar-container" id="resourceBars">
+          <div class="resource-bar-item">
+            <div class="label">CPU Usage</div>
+            <div class="value" id="cpuValue">--%</div>
+            <div class="bar-track"><div class="bar-fill" id="cpuBar" style="width:0%;"></div></div>
+          </div>
+          <div class="resource-bar-item">
+            <div class="label">RAM Usage</div>
+            <div class="value" id="ramValue">-- MB</div>
+            <div class="bar-track"><div class="bar-fill" id="ramBar" style="width:0%;"></div></div>
+          </div>
+          <div class="resource-bar-item">
+            <div class="label">Disk Usage</div>
+            <div class="value" id="diskValue">-- MB</div>
+            <div class="bar-track"><div class="bar-fill" id="diskBar" style="width:0%;"></div></div>
+          </div>
+        </div>
+
+        <!-- Server Controls -->
+        <div class="controls-grid">
+          <button class="btn-sm primary" onclick="controlServer('start')">▶ Start</button>
+          <button class="btn-sm" onclick="controlServer('stop')">⏹ Stop</button>
+          <button class="btn-sm" onclick="controlServer('restart')">🔄 Restart</button>
+          <button class="btn-sm danger" onclick="controlServer('kill')">💀 Kill</button>
+          <button class="btn-sm" onclick="controlServer('reinstall')">🔧 Reinstall</button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="console">📟 Console</button>
+          <button class="tab-btn" data-tab="files">📁 Files</button>
+          <button class="tab-btn" data-tab="details">ℹ️ Details</button>
+        </div>
+
+        <!-- ==========================================
+        TAB 1: CONSOLE
+        ========================================== -->
+        <div class="tab-content active" id="tab-console">
+          <div class="console-container" id="consoleOutput">
+            <span class="console-line">💻 Console ready. Send commands below.</span>
+          </div>
+          <div class="console-input-row">
+            <input type="text" id="consoleInput" placeholder="Enter command..." />
+            <button onclick="sendCommand()">Send</button>
+          </div>
+        </div>
+
+        <!-- ==========================================
+        TAB 2: FILES
+        ========================================== -->
+        <div class="tab-content" id="tab-files">
+          <div class="file-manager">
+            <div class="file-manager-header">
+              <span class="path">📂 <strong id="currentDir">/</strong></span>
+              <div>
+                <button class="btn-sm" onclick="fetchFiles()" style="margin-right: 8px;">🔄 Refresh</button>
+              </div>
+            </div>
+            <div id="fileList">
+              <div class="loading-spinner" style="padding: 20px;">
+                <div class="spinner" style="width:24px;height:24px;"></div>
+                <p style="font-size:0.9rem;">Loading files...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==========================================
+        TAB 3: DETAILS
+        ========================================== -->
+        <div class="tab-content" id="tab-details">
+          <div class="details-grid" id="detailsGrid">
+            <div class="detail-item">
+              <div class="label">Server ID</div>
+              <div class="value" id="detailId">--</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">Status</div>
+              <div class="value" id="detailStatus">--</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">Plan</div>
+              <div class="value" id="detailPlan">--</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">RAM Limit</div>
+              <div class="value" id="detailRam">-- MB</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">Disk Limit</div>
+              <div class="value" id="detailDisk">-- MB</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">CPU Limit</div>
+              <div class="value" id="detailCpu">--%</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">Port</div>
+              <div class="value" id="detailPort">--</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">Node</div>
+              <div class="value" id="detailNode">--</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">Created</div>
+              <div class="value" id="detailCreated">--</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">Expires</div>
+              <div class="value" id="detailExpires">--</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /mainContent -->
+
+      <!-- Support Contact -->
+      <div style="margin-top: 40px; padding: 20px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); text-align: center;">
+        <p style="color: var(--text-muted);">
+          📞 Need help? Contact us on
+          <a href="https://wa.me/255636756591" target="_blank" style="color: var(--accent);">WhatsApp</a>
+          or email
+          <a href="mailto:bigmanj.tech@gmail.com" style="color: var(--accent);">bigmanj.tech@gmail.com</a>
+        </p>
+        <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 8px;">
+          © bighosting by bigmanjtech™ • 📞 255636756591
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==========================================
+  SCRIPT
+  ========================================== -->
+  <script>
+    (function() {
+      // ---- Check Authentication ----
+      const token = localStorage.getItem('bighosting_token');
+      if (!token) {
+        window.location.href = '/login.html';
+        return;
+      }
+
+      // ---- Get Server ID from URL ----
+      const params = new URLSearchParams(window.location.search);
+      const serverId = params.get('id');
+
+      if (!serverId) {
+        alert('No server selected.');
+        window.location.href = '/dashboard.html';
+        return;
+      }
+
+      let serverData = null;
+
+      // ---- DOM Elements ----
+      const loadingState = document.getElementById('loadingState');
+      const mainContent = document.getElementById('mainContent');
+      const serverName = document.getElementById('serverName');
+      const serverPlan = document.getElementById('serverPlan');
+      const serverStatusBadge = document.getElementById('serverStatusBadge');
+
+      // Resource bars
+      const cpuValue = document.getElementById('cpuValue');
+      const cpuBar = document.getElementById('cpuBar');
+      const ramValue = document.getElementById('ramValue');
+      const ramBar = document.getElementById('ramBar');
+      const diskValue = document.getElementById('diskValue');
+      const diskBar = document.getElementById('diskBar');
+
+      // Details
+      const detailId = document.getElementById('detailId');
+      const detailStatus = document.getElementById('detailStatus');
+      const detailPlan = document.getElementById('detailPlan');
+      const detailRam = document.getElementById('detailRam');
+      const detailDisk = document.getElementById('detailDisk');
+      const detailCpu = document.getElementById('detailCpu');
+      const detailPort = document.getElementById('detailPort');
+      const detailNode = document.getElementById('detailNode');
+      const detailCreated = document.getElementById('detailCreated');
+      const detailExpires = document.getElementById('detailExpires');
+
+      // Console
+      const consoleOutput = document.getElementById('consoleOutput');
+      const consoleInput = document.getElementById('consoleInput');
+
+      // File Manager
+      const currentDir = document.getElementById('currentDir');
+      const fileList = document.getElementById('fileList');
+
+      // ---- Helper: API Request ----
+      async function apiRequest(endpoint, options = {}) {
+        const response = await fetch(endpoint, {
+          ...options,
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            ...(options.headers || {}),
+          },
+        });
+
+        if (response.status === 401) {
+          localStorage.removeItem('bighosting_token');
+          localStorage.removeItem('bighosting_user');
+          window.location.href = '/login.html';
+          return null;
+        }
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || 'Request failed');
+        }
+        return data;
+      }
+
+      // ---- Load Server Details ----
+      async function loadServer() {
+        try {
+          const data = await apiRequest(`/api/servers/${serverId}`);
+          if (!data) return;
+
+          serverData = data.server;
+
+          // Update header
+          serverName.textContent = serverData.name || 'Unnamed Server';
+          serverPlan.textContent = `Plan: ${serverData.plan?.name || 'Unknown'}`;
+          updateStatusBadge(serverData.status);
+
+          // Update details
+          detailId.textContent = serverData.id || '--';
+          detailStatus.textContent = serverData.status || '--';
+          detailPlan.textContent = serverData.plan?.name || 'Unknown';
+          detailRam.textContent = `${serverData.ramLimit || 0} MB`;
+          detailDisk.textContent = `${serverData.diskLimit || 0} MB`;
+          detailCpu.textContent = `${serverData.cpuLimit || 0}%`;
+          detailPort.textContent = serverData.port || '--';
+          detailNode.textContent = serverData.node || '--';
+          detailCreated.textContent = serverData.createdAt ? new Date(serverData.createdAt).toLocaleString() : '--';
+          detailExpires.textContent = serverData.expiresAt ? new Date(serverData.expiresAt).toLocaleString() : 'Never';
+
+          // Update resources if available
+          if (serverData.resources) {
+            updateResources(serverData.resources);
+          }
+
+          // Show content
+          loadingState.style.display = 'none';
+          mainContent.style.display = 'block';
+
+          // Load files
+          fetchFiles();
+
+          // Start auto-refresh (every 10 seconds)
+          startAutoRefresh();
+
+        } catch (error) {
+          loadingState.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">⚠️</div>
+              <h3>Error Loading Server</h3>
+              <p>${error.message}</p>
+              <button class="btn btn-primary" onclick="location.reload()">Retry</button>
+            </div>
+          `;
+        }
+      }
+
+      // ---- Update Status Badge ----
+      function updateStatusBadge(status) {
+        const statusMap = {
+          'RUNNING': { class: 'running', label: 'Running' },
+          'STOPPED': { class: 'stopped', label: 'Stopped' },
+          'PENDING': { class: 'installing', label: 'Pending' },
+          'INSTALLING': { class: 'installing', label: 'Installing' },
+          'RESTARTING': { class: 'installing', label: 'Restarting' },
+          'SUSPENDED': { class: 'suspended', label: 'Suspended' },
+          'FAILED': { class: 'stopped', label: 'Failed' },
+          'DELETED': { class: 'stopped', label: 'Deleted' },
+        };
+        const info = statusMap[status] || { class: 'stopped', label: status || 'Unknown' };
+        serverStatusBadge.className = `server-status-badge ${info.class}`;
+        serverStatusBadge.textContent = info.label;
+      }
+
+      // ---- Update Resources ----
+      function updateResources(resources) {
+        if (!resources) return;
+
+        // CPU
+        const cpu = resources.cpu || 0;
+        cpuValue.textContent = `${cpu}%`;
+        cpuBar.style.width = `${Math.min(cpu, 100)}%`;
+
+        // RAM
+        const ramMb = resources.memory ? Math.round(resources.memory / 1024 / 1024) : 0;
+        const ramLimit = serverData?.ramLimit || 1;
+        const ramPercent = ramLimit > 0 ? Math.min((ramMb / ramLimit) * 100, 100) : 0;
+        ramValue.textContent = `${ramMb} MB / ${ramLimit} MB`;
+        ramBar.style.width = `${ramPercent}%`;
+
+        // Disk
+        const diskMb = resources.disk ? Math.round(resources.disk / 1024 / 1024) : 0;
+        const diskLimit = serverData?.diskLimit || 1;
+        const diskPercent = diskLimit > 0 ? Math.min((diskMb / diskLimit) * 100, 100) : 0;
+        diskValue.textContent = `${diskMb} MB / ${diskLimit} MB`;
+        diskBar.style.width = `${diskPercent}%`;
+      }
+
+      // ---- Fetch Resources (Live) ----
+      async function fetchResources() {
+        try {
+          const data = await apiRequest(`/api/servers/${serverId}/resources`);
+          if (data && data.resources) {
+            updateResources(data.resources);
+          }
+        } catch (e) {
+          // Silent fail
+        }
+      }
+
+      // ---- Auto Refresh ----
+      let refreshInterval = null;
+
+      function startAutoRefresh() {
+        if (refreshInterval) clearInterval(refreshInterval);
+        refreshInterval = setInterval(() => {
+          fetchResources();
+          // Also refresh server status
+          fetchServerStatus();
+        }, 10000);
+      }
+
+      async function fetchServerStatus() {
+        try {
+          const data = await apiRequest(`/api/servers/${serverId}`);
+          if (data && data.server) {
+            const status = data.server.status;
+            if (status !== serverData?.status) {
+              serverData.status = status;
+              updateStatusBadge(status);
+            }
+          }
+        } catch (e) {
+          // Silent fail
+        }
+      }
+
+      // ---- Control Server ----
+      window.controlServer = async function(action) {
+        const actionMap = {
+          start: 'Starting',
+          stop: 'Stopping',
+          restart: 'Restarting',
+          kill: 'Killing',
+          reinstall: 'Reinstalling',
+        };
+
+        if (!confirm(`Are you sure you want to ${action} this server?`)) {
+          return;
+        }
+
+        try {
+          const data = await apiRequest(`/api/servers/${serverId}/${action}`, {
+            method: 'POST',
+          });
+
+          if (data) {
+            alert(`✅ Server ${action}ed successfully!`);
+            loadServer(); // Reload
+          }
+        } catch (error) {
+          alert(`❌ ${error.message}`);
+        }
+      };
+
+      // ---- Send Command ----
+      window.sendCommand = async function() {
+        const command = consoleInput.value.trim();
+        if (!command) return;
+
+        // Add to console
+        addConsoleLine(`> ${command}`, 'success');
+
+        consoleInput.value = '';
+        consoleInput.disabled = true;
+
+        try {
+          const data = await apiRequest(`/api/servers/${serverId}/command`, {
+            method: 'POST',
+            body: JSON.stringify({ command }),
+          });
+
+          if (data) {
+            addConsoleLine('✅ Command sent successfully', 'success');
+          }
+        } catch (error) {
+          addConsoleLine(`❌ ${error.message}`, 'error');
+        } finally {
+          consoleInput.disabled = false;
+          consoleInput.focus();
+        }
+      };
+
+      // ---- Add Console Line ----
+      function addConsoleLine(text, type = '') {
+        const line = document.createElement('div');
+        line.className = `console-line ${type}`;
+        line.textContent = text;
+        consoleOutput.appendChild(line);
+        consoleOutput.scrollTop = consoleOutput.scrollHeight;
+      }
+
+      // ---- Console Enter Key ----
+      consoleInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          sendCommand();
+        }
+      });
+
+      // ---- Fetch Files ----
+      window.fetchFiles = async function(directory) {
+        if (directory === undefined) {
+          directory = currentDir.textContent;
+        }
+
+        try {
+          const data = await apiRequest(`/api/servers/${serverId}/files?directory=${encodeURIComponent(directory)}`);
+
+          if (data) {
+            currentDir.textContent = data.directory || '/';
+            renderFiles(data.files || []);
+          }
+        } catch (error) {
+          fileList.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">⚠️</div>
+              <p>${error.message}</p>
+            </div>
+          `;
+        }
+      };
+
+      // ---- Render Files ----
+      function renderFiles(files) {
+        if (!files || files.length === 0) {
+          fileList.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">📂</div>
+              <p>This directory is empty</p>
+            </div>
+          `;
+          return;
+        }
+
+        let html = `
+          <table class="file-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Size</th>
+                <th>Modified</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        for (const file of files) {
+          const isDir = file.is_file === false;
+          const icon = isDir ? '📁' : '📄';
+          const size = isDir ? '--' : formatFileSize(file.size);
+          const modified = file.modified_at ? new Date(file.modified_at).toLocaleString() : '--';
+          const name = file.name || 'unnamed';
+
+          html += `
+            <tr>
+              <td>
+                <span class="file-icon">${icon}</span>
+                <span class="file-name" onclick="${isDir ? `fetchFiles('${currentDir.textContent}/${name}')` : `viewFile('${currentDir.textContent}/${name}')`}">
+                  ${name}
+                </span>
+              </td>
+              <td>${size}</td>
+              <td>${modified}</td>
+              <td class="file-actions">
+                ${isDir ? '' : `<button onclick="viewFile('${currentDir.textContent}/${name}')">👁️ View</button>`}
+                <button class="danger" onclick="deleteFile('${currentDir.textContent}/${name}')">🗑️ Delete</button>
+              </td>
+            </tr>
+          `;
+        }
+
+        html += `
+            </tbody>
+          </table>
+        `;
+
+        fileList.innerHTML = html;
+      }
+
+      // ---- Format File Size ----
+      function formatFileSize(bytes) {
+        if (!bytes || bytes === 0) return '0 B';
+        const units = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(1024));
+        return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${units[i]}`;
+      }
+
+      // ---- View File ----
+      window.viewFile = async function(filePath) {
+        try {
+          const data = await apiRequest(`/api/servers/${serverId}/files/content?file=${encodeURIComponent(filePath)}`);
+          if (data) {
+            alert(`📄 ${filePath}\n\n${data.content || '(empty file)'}`);
+          }
+        } catch (error) {
+          alert(`❌ ${error.message}`);
+        }
+      };
+
+      // ---- Delete File ----
+      window.deleteFile = async function(filePath) {
+        if (!confirm(`Delete ${filePath}?`)) return;
+
+        try {
+          const data = await apiRequest(`/api/servers/${serverId}/files`, {
+            method: 'DELETE',
+            body: JSON.stringify({ file: filePath }),
+          });
+
+          if (data) {
+            alert('✅ File deleted successfully');
+            fetchFiles();
+          }
+        } catch (error) {
+          alert(`❌ ${error.message}`);
+        }
+      };
+
+      // ---- Tabs ----
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+
+          document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+          const tabId = this.dataset.tab;
+          document.getElementById(`tab-${tabId}`).classList.add('active');
+
+          // Refresh files if switching to files tab
+          if (tabId === 'files') {
+            fetchFiles();
+          }
+        });
+      });
+
+      // ---- Logout ----
+      document.getElementById('navLogout').addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('bighosting_token');
+        localStorage.removeItem('bighosting_user');
+        window.location.href = '/login.html';
+      });
+
+      // ---- Init ----
+      loadServer();
+
+    })();
+  </script>
+
+</body>
+</html>
