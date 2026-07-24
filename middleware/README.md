@@ -1,1 +1,0 @@
-# Middleware for ©big hosting by bigmanjtech ™
