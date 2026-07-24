@@ -17,6 +17,8 @@ import { fileURLToPath } from 'url';
 // ==========================================
 import authRoutes from './src/backend/routes/authRoutes.js';
 import serverRoutes from './src/backend/routes/serverRoutes.js';
+import paymentRoutes from './src/backend/routes/paymentRoutes.js';
+import adminRoutes from './src/backend/routes/adminRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -70,6 +72,12 @@ app.use('/api/auth', authRoutes);
 // Server Routes (Manage Pterodactyl Servers)
 app.use('/api/servers', serverRoutes);
 
+// Payment Routes (Stripe Checkout, Webhooks)
+app.use('/api/payments', paymentRoutes);
+
+// Admin Routes (Manage Users, Plans, Orders)
+app.use('/api/admin', adminRoutes);
+
 // ==========================================
 // ERROR HANDLERS
 // ==========================================
@@ -102,6 +110,8 @@ app.listen(PORT, () => {
   console.log(`📋 Routes registered:`);
   console.log(`   /api/auth     - Authentication (login, register, reset)`);
   console.log(`   /api/servers  - Server management (start, stop, files)`);
+  console.log(`   /api/payments - Stripe payments, webhooks, invoices`);
+  console.log(`   /api/admin    - Admin dashboard (users, plans, stats)`);
   console.log(`=========================================`);
 });
 
