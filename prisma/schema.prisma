@@ -1,6 +1,6 @@
 // ==========================================
 // © bighosting by bigmanjtech™
-// Database Schema – MySQL / PlanetScale
+// Database Schema – MySQL (Aiven)
 // ==========================================
 
 generator client {
@@ -49,7 +49,7 @@ enum Role {
 }
 
 // ==============================
-// 2. PLANS (Hosting Packages)
+// 2. PLANS
 // ==============================
 model Plan {
   id              String   @id @default(cuid())
@@ -89,7 +89,7 @@ model Order {
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
-  user          User         @relation(fields: [userId], references: [id], onDelete: CASCADE)
+  user          User         @relation(fields: [userId], references: [id])
   plan          Plan         @relation(fields: [planId], references: [id])
   payments      Payment[]
   servers       Server[]
@@ -127,8 +127,8 @@ model Payment {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
-  user            User            @relation(fields: [userId], references: [id], onDelete: CASCADE)
-  order           Order           @relation(fields: [orderId], references: [id], onDelete: CASCADE)
+  user            User            @relation(fields: [userId], references: [id])
+  order           Order           @relation(fields: [orderId], references: [id])
 
   @@index([userId])
   @@index([orderId])
@@ -181,7 +181,7 @@ model Server {
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
 
-  user                User            @relation(fields: [userId], references: [id], onDelete: CASCADE)
+  user                User            @relation(fields: [userId], references: [id])
   order               Order           @relation(fields: [orderId], references: [id])
   plan                Plan            @relation(fields: [planId], references: [id])
 
@@ -219,7 +219,7 @@ model Ticket {
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
-  user        User            @relation(fields: [userId], references: [id], onDelete: CASCADE)
+  user        User            @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([status])
@@ -253,7 +253,7 @@ model Notification {
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: CASCADE)
+  user      User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([isRead])
@@ -277,7 +277,7 @@ model Invoice {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 
-  user          User            @relation(fields: [userId], references: [id], onDelete: CASCADE)
+  user          User            @relation(fields: [userId], references: [id])
   order         Order?          @relation(fields: [orderId], references: [id])
 
   @@index([userId])
@@ -385,7 +385,7 @@ model AuditLog {
   userAgent   String?  @db.Text
   createdAt   DateTime @default(now())
 
-  user        User     @relation(fields: [userId], references: [id], onDelete: CASCADE)
+  user        User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([action])
@@ -394,7 +394,7 @@ model AuditLog {
 }
 
 // ==============================
-// 14. PASSWORD RESETS  <--- NEW!
+// 14. PASSWORD RESETS
 // ==============================
 model PasswordReset {
   id        String   @id @default(cuid())
@@ -404,7 +404,7 @@ model PasswordReset {
   used      Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  user      User?    @relation(fields: [email], references: [email], onDelete: CASCADE)
+  user      User?    @relation(fields: [email], references: [email])
 
   @@index([email])
   @@index([token])
