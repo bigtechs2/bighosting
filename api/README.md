@@ -1,1 +1,0 @@
-# API Routes for ©big hosting by bigmanjtech ™
